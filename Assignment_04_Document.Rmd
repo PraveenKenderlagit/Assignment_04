@@ -57,8 +57,10 @@ who5 <- who4 %>%
 ``` {r, warning = FALSE}
 who6 <- who3 %>%  select(country, iso2, iso3)
 
-who6 <- who6 %>% unique() %>%  group_by(country) %>% # We can explicitly observe that is02 and is03 are just an short forms of country name
-           filter(n() >1) # or we can use flter to see it!
+who6 <- who6 %>% 
+        unique() %>%  
+        group_by(country) %>% # We can explicitly observe that is02 and is03 are just an short forms of country name
+        filter(n() >1) # or we can use flter to see it!
 ```
 ******
 
@@ -73,11 +75,16 @@ who7 <- who5 %>%  filter(cases > 2000, year > 2000) %>%
   summarise(cases = sum(cases)) %>% 
   unite(country_sex, country, sex, remove = FALSE)
 
-who7 # prvides a tibble with filtering the cases above 2000 and year above 2000 and grouped by country, year and sex and summarised cases and unites the country and sex which would be used to plot the graph.
+who7 # prvides a tibble with filtering the cases above 2000 and 
+#year above 2000 and grouped by country, year and sex and summarised cases '
+#and unites the country and sex which would be used to plot the graph.
 
-who8 <- ggplot(who7) + geom_line(aes(x = year, y = cases, group = country_sex, color = sex))
+who8 <- ggplot(who7) + 
+  geom_line(aes(x = year, y = cases, 
+                group = country_sex, color = sex))
 
-who8 # plots a line graph with cases on y axis and year on x axis and gender represented as different colors. We can also plot a point graph but line grpah provides continous view of cases. 
+who8 # plots a line graph with cases on y axis and year on x axis and gender represented as 
+#different colors. We can also plot a point graph but line grpah provides continous view of cases. 
 
 
 ```
@@ -107,7 +114,10 @@ Table4 <- as.tibble(raw) # instead of `10k`... column names, it gives x..10k nam
 # the reason for this is because the source package used to covert the data into Table 4 in tidyverse
 # is not updated to 3.4.4 version. So, I saved the data file and again uploaded in here.
 
-Table6 <- Table4 %>%  gather(X..10k:Don.t.know.refused, key = "Income", value = "Freq", na.rm = T)
+Table6 <- Table4 %>%  
+          gather(X..10k:Don.t.know.refused, 
+                key = "Income", value = "Freq") %>% 
+          arrange(religion)
 
 # Table6 <- Table4 %>%  gather (`<$10k`, `$10-20k`, `$20-30k`,`$30-40k`,`$40-50k`,
 #                              `$50-75k`,`$75-100k`,`$100-150k`,`>150k`, 
@@ -133,10 +143,13 @@ raw2 <- read.csv("Table7.csv")
 
 Table7 <- as.tibble(raw2)
 
-Table7 <- raw2 %>%  gather(wk1:wk76, key = "Week", value = "Freq", na.rm = T) # gathers information about for all weeks 1 to 76. 
+Table7 <- raw2 %>%  
+  gather(wk1:wk76, key = "Week", value = "Freq", na.rm = T) 
+# gathers information about for all weeks 1 to 76. 
 
 
-Table8 <- Table7 %>%  arrange(artist)  # Arranges the table 7 according to the artist.
+Table8 <- Table7 %>%  
+  arrange(artist)  # Arranges the table 7 according to the artist.
 
 names(Table8)[names(Table8) == "date.entered"] <- "date" # changes the data.entered name into date
 Table8
