@@ -97,14 +97,12 @@ write.csv(Table4, file = "Table4.csv", header = TRUE)
 
 Table6 <- Table4 %>%  gather (`<$10k`, `$10-20k`, `$20-30k`,`$30-40k`,`$40-50k`,`$50-75k`,`$75-100k`,`$100-150k`,`>150k`, `Don't know/refused`, key = "Income", value = "freq")
 
-Table6 <- Table4 %>% gather (`<$10k`:`Don't know/refused`, key = "Income", value = "Freq", na.rm = T)
+Table6 <- Table4 %>% gather (`<$10k`:`Don't know/refused`, key = "Income", value = "Freq") %>%  arrange(religion)
 
 Table6
 
 
 # Table7 to Table8; 
-
-
 options(stringsAsFactors = FALSE)
 
 raw <- read.csv("billboard.csv")
