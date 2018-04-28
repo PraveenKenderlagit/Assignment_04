@@ -1,0 +1,145 @@
+---
+title: "Assignment_04"
+author: "Praveen"
+date: "April 12, 2018"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+header-includes: \DeclareMathSizes{12}{12}{12}{12}
+---
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Loading Libraries
+
+******
+```{r, message = FALSE, warning = FALSE, results = 'hide', include=TRUE}
+library(tidyverse)
+library(ggplot2)
+```
+
+******
+
+## Getting the WHO data: 
+
+******
+```{r, warning=FALSE, echo=FALSE, results='hide'}
+who1 <- who %>%  
+   gather (new_sp_m014:newrel_f65, key = "key", value = "cases", na.rm = T)
+
+who1 %>%  count(key)
+
+who2 <- who1 %>%  mutate(key = stringr::str_replace(key, "newrel", "new_rel"))
+
+who3 <- who2 %>%  
+    separate(key, c("new", "type", "sexage"), sep = "_")
+
+who3 %>%  count(new)
+
+who4 <- who3 %>%  
+   select(-new, -iso2, -iso3)
+
+who5 <- who4 %>%  
+    separate(sexage, c("sex", "age"), sep = 1)
+
+```
+******
+
+
+
+## Problem 3: Showing the iso2 and iso3 are redudant with country information
+******
+``` {r, warning = FALSE}
+who6 <- who3 %>%  select(country, iso2, iso3)
+
+who6 <- who6 %>% unique() %>%  group_by(country) %>% # We can explicitly observe that is02 and is03 are just an short forms of country name
+           filter(n() >1) # or we can use flter to see it!
+```
+******
+
+******
+
+## Problem 4: 
+
+```{r, warning=FALSE}
+
+who7 <- who5 %>%  filter(cases > 2000, year > 2000) %>%  
+  group_by(country, year, sex) %>%  
+  summarise(cases = sum(cases)) %>% 
+  unite(country_sex, country, sex, remove = FALSE)
+
+who7 # prvides a tibble with filtering the cases above 2000 and year above 2000 and grouped by country, year and sex and summarised cases and unites the country and sex which would be used to plot the graph.
+
+who8 <- ggplot(who7) + geom_line(aes(x = year, y = cases, group = country_sex, color = sex))
+
+who8 # plots a line graph with cases on y axis and year on x axis and gender represented as different colors. We can also plot a point graph but line grpah provides continous view of cases. 
+
+
+```
+******
+
+******
+## 2)   10.5 : problem 5{.smaller}
+
+### enframe(x, name = "name", value = "value")
+### Enframe converts the vectors or lists into two column tibble.
+### We can use it to convert the individual vectors into tibbles and name their columns. 
+
+******
+
+******
+
+
+******
+## 3)   table 4 -> table 6
+
+```{r, warning=FALSE}
+
+raw <- read.csv("Table4.csv") # UPloading the saved file
+
+Table4 <- as.tibble(raw) # instead of `10k`... column names, it gives x..10k names
+
+# the reason for this is because the source package used to covert the data into Table 4 in tidyverse
+# is not updated to 3.4.4 version. So, I saved the data file and again uploaded in here.
+
+Table6 <- Table4 %>%  gather(X..10k:Don.t.know.refused, key = "Income", value = "Freq", na.rm = T)
+
+# Table6 <- Table4 %>%  gather (`<$10k`, `$10-20k`, `$20-30k`,`$30-40k`,`$40-50k`,
+#                              `$50-75k`,`$75-100k`,`$100-150k`,`>150k`, 
+#                              `Don't know/refused`, key = "Income", value = "freq")
+
+# we can do this other way too: '':'' takes the all the column values between and gathers
+
+# Table6 <- Table4 %>% gather (`<$10k`:`Don't know/refused`, key = "Income", value = "Freq", na.rm = T)
+
+Table6
+
+
+```
+******
+
+
+## 4)   table 7 -> table 8
+
+******
+```{r, warning=FALSE}
+
+raw2 <- read.csv("Table7.csv")
+
+Table7 <- as.tibble(raw2)
+
+Table7 <- raw2 %>%  gather(wk1:wk76, key = "Week", value = "Freq", na.rm = T) # gathers information about for all weeks 1 to 76. 
+
+
+Table8 <- Table7 %>%  arrange(artist)  # Arranges the table 7 according to the artist.
+
+names(Table8)[names(Table8) == "date.entered"] <- "date" # changes the data.entered name into date
+Table8
+
+```
+******
